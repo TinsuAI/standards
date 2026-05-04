@@ -225,20 +225,43 @@ candidates before tagging.
 
 ### Multi-tenant on a shared host
 
-A single host may run multiple products / multiple environments. The
-isolation contract:
+Two distinct co-tenancy patterns. Don't conflate them.
 
-- **Tier D + S (allowed freely)**: separate Compose project, separate
-  named volumes, separate published ports. No further requirement.
-- **Tier P co-tenanted with anything else (only with explicit
-  approval)**: every tenant gets its own Postgres role with no
-  privileges on other schemas; volumes mounted with non-overlapping
-  hostpaths; backup runs per-tenant; documented in the tenant's
-  per-product doc with a date and a reviewer name.
-- **Forbidden**: two tier-P workloads sharing a Postgres database
-  (even with separate schemas) without per-database role isolation.
-  Different products on the same Postgres cluster require separate
-  databases, not just separate schemas.
+**Pattern A — same product portfolio, schema-per-app on a single
+database.** Members of one TinsuAI product portfolio (e.g. Data
+Hub + BCQT + CO) MAY share a single Postgres database with one
+schema per app and one Postgres role per app. The role-per-app
+pattern is the isolation contract. Required:
+
+- Each app has a dedicated Postgres role.
+- Each role has DDL+DML privileges on **its own** schema only.
+- Each role has explicit `usage` + `select` grants on the schemas
+  it consumes; no `insert/update/delete` on schemas it doesn't
+  own.
+- Application code never connects with a superuser role.
+- Backup runs per-database (one logical dump covers all schemas).
+- Restore drill verifies cross-schema reads still resolve after a
+  full restore.
+
+This pattern is allowed at any tier (D / S / P). It is what the
+TinsuAI product portfolio architecture commits to.
+
+**Pattern B — unrelated products co-tenanted on one host.** A
+single host may run multiple products that are not in one
+portfolio (e.g. an unrelated SaaS sharing the same VPS as a
+TinsuAI Tier-D demo).
+
+- **Tier D + S (allowed freely)**: separate Compose project,
+  separate named volumes, separate published ports. No further
+  requirement.
+- **Tier P co-tenanted with unrelated workloads (only with explicit
+  approval)**: every tenant gets its own database (not just its
+  own schema), its own Postgres role, volumes mounted with
+  non-overlapping host paths, per-tenant backup, documented in the
+  tenant's per-product doc with a date and a reviewer name.
+- **Forbidden**: two unrelated tier-P workloads sharing one
+  Postgres database (even with separate schemas) — they must use
+  separate databases.
 
 ### Promotion path
 

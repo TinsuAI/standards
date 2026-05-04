@@ -14,10 +14,12 @@ detail lives in each repo's `AGENTS.md`.
 2. **BCQT-System** — annual settlement reports (Mẫu 15 / 15a / 16).
    Read-only consumer of Data Hub.
 
-3. **CO-System** — per-shipment origin certificates. Consumer of
-   Data Hub for HQ-data. The exact write boundary back into
-   Data Hub varies by MVP scope decision; see each product's
-   current `.ai/DECISIONS.md`.
+3. **CO-System** — per-shipment origin certificates. **Read-only
+   consumer of Data Hub** for HQ-data in MVP (locked 2026-05-01).
+   CO does not write back into Data Hub; it maintains its own
+   per-shipment state in the `co` schema. A CO → Data Hub write
+   path was discussed and deferred; see
+   `BCQT-System/.ai/DECISIONS.md` 2026-05-01 entry.
 
 ## Storage ownership (provisional, MVP)
 

@@ -60,6 +60,27 @@ The flow:
 5. **CHANGELOG + tag**: add a CHANGELOG entry. Tag `vYYYY.MM.DD`
    matching the merge date.
 
+## Initial baseline exception
+
+The first tag of this repo (`v2026.05.04`) shipped a substantive
+policy file (`policies/release-engineering.md`) without an RFC
+under `proposals/`. That was intentional: the content was already
+drafted in another repo, reviewed by an independent critic agent,
+amended in response, and adopted by `data-hub` as part of the
+same change.
+
+The "RFC + cool-down" flow above applies to changes **after**
+the baseline. If you're standing up this repo for the first time
+or moving an already-reviewed draft from another location into
+`policies/`, you can skip the RFC step provided:
+
+- The CHANGELOG entry names where the draft came from and what
+  review it went through.
+- The cool-down rule still applies before the merge that
+  promotes the baseline tag.
+
+Subsequent substantive changes follow the RFC + cool-down flow.
+
 ## Solo maintainer realism
 
 When the maintainer is the only reviewer:

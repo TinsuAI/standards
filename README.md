@@ -85,15 +85,38 @@ When a policy file changes:
 
 ## How AI agents should use this repo
 
-When working in a consumer repo:
+This repo is **private**. WebFetch against the GitHub URL returns
+404 for unauthenticated agents — don't rely on it. Resolution
+order:
 
-- Read the consumer's `.standards-version` and the linked policy
-  files for the area you're changing (versioning, branching, etc.)
-  via WebFetch.
-- If the consumer's per-product doc disagrees with the policy doc,
-  prefer the per-product doc but flag the disagreement to the user.
-- Don't edit policy files from a consumer-repo session. Open a PR
-  in this repo (or surface the question to the user) instead.
+1. **Local checkout (preferred)**. Most maintainer machines have
+   this repo at `~/workspace/client/tinsu-standards`. Read the
+   policy file directly off disk. Pin to the tag in the consumer
+   repo's `.standards-version` via:
+   ```
+   git -C ~/workspace/client/tinsu-standards show \
+       <tag>:policies/<file>.md
+   ```
+2. **GitHub CLI fallback**. If the local checkout isn't present
+   but the user has `gh` authenticated:
+   ```
+   gh api repos/TinsuAI/standards/contents/policies/<file>.md \
+       --ref <tag> --jq .content | base64 -d
+   ```
+3. **Worst case**: ask the user to paste the relevant section.
+   Don't guess from training data.
+
+Behaviour when working in a consumer repo:
+
+- Read the consumer's `.standards-version` first; that pins which
+  tag of policy applies to that repo.
+- If the consumer's per-product doc disagrees with the policy
+  doc, prefer the per-product doc but flag the disagreement to
+  the user — the per-product doc may be stale OR the policy may
+  need amending.
+- Don't edit policy files from a consumer-repo session. Surface
+  the question to the user; they'll open a session in this repo
+  to amend.
 
 ## Maintenance
 

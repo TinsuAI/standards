@@ -53,10 +53,11 @@ shared concepts.
 - **BCQT-System** — TinsuAI product producing annual settlement
   reports. Read-only consumer of Data Hub.
 - **CO-System** — TinsuAI product producing per-shipment origin
-  certificates. Read-only consumer of Data Hub for HQ-data; may
-  write per-shipment data via Data Hub's API depending on the
-  current MVP scope (see each product's `.ai/DECISIONS.md` for the
-  current ownership boundary, which has been narrowed and broadened
-  multiple times).
+  certificates. **MVP scope (locked 2026-05-01)**: read-only
+  consumer of Data Hub for HQ-data (BCCT + Danh Mục + BOM); CO
+  does **not** write per-shipment BCCT back into Data Hub. CO
+  maintains its own per-shipment state in the `co` schema. The
+  write-back path is deferred — see
+  `BCQT-System/.ai/DECISIONS.md` 2026-05-01 entry.
 - **Agency** — A customs-compliance services firm; the direct user
   of TinsuAI products. Serves multiple DNCXs as customers.
